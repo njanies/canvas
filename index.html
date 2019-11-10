@@ -1,0 +1,102 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<title>Drawing Area</title>
+	<!-- You can add your style here rather than in an external style sheet. -->
+	<style>
+		canvas {
+	    	border:5px solid #d3d3d3;
+	    	background-color: #f1f1f1;
+	    	display: block;
+		}
+	</style>
+</head>
+<body>
+    <!-- DO NOT MODIFY THIS HTML -->
+    <canvas id = "myCanvas" width = "350" height = "500"  ></canvas>
+    <input type = "color" id = "picker"/>
+
+<script>
+	var canvas = document.querySelector("#myCanvas");
+	var ctx = canvas.getContext("2d");
+	var color = document.getElementById("picker").value;
+	ctx.canvas.height = window.innerHeight * 0.8;
+	ctx.canvas.width = window.innerWidth * 0.8; 
+	var canvasPos = makeCenter(canvas); 
+	let isDrawing = true; 
+
+	function draw(posX, posY) {
+		ctx.fillStyle = color; 
+		ctx.beginPath(); 
+		ctx.arc(posX, posY, 10, 0, 2 * Math.PI);
+		ctx.fill(); 
+	}
+
+	myCanvas.addEventListener (
+		'mousemove', function (e) {
+		//values are adjusted based on where the canvas is on the page 
+		//only draws if isDrawing is true
+		if (isDrawing == true) {
+			draw(e.x - canvasPos.x, e.y - canvasPos.y); 
+		}
+	}) 
+
+	picker.addEventListener (
+		'change', function () {
+			color = document.getElementById("picker").value;
+		})
+
+	window.addEventListener (
+		'keydown', function (e) {
+			var key = event.keyCode;
+
+			//when up arrow is pressed, pen is lifted up, stop drawing, otherwise, put pen down and start drawing again
+			if (key == 38) {
+				isDrawing = false;
+			} else if (key == 40) {
+				isDrawing = true;
+			}
+
+			//these control the color
+			if (key == 71) {
+				color = "green"
+			} else if (key == 66) {
+				color = "blue"
+			} else if (key == 89) {
+				color = "yellow"
+			} else if (key == 82) {
+				color = "red"
+			} 
+
+			//clears the canvas using the spacebar
+			if (key == 32) {
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+			}
+		})
+
+	window.addEventListener (
+		'keyup', function (e) {
+
+		})
+
+	function makeCenter(element) {
+		var xPos = 0;
+		var yPos = 0;
+		//figures out where the element (ie canvas) is on the screen to figure out the offset that will be needed to be in the center of the circle 
+		while (element) {
+			xPos += (element.offsetLeft - element.scrollLeft + element.clientLeft);
+			yPos += (element.offsetTop - element.scrollTop + element.clientTop); 
+			element = element.offsetParent; 
+		}
+		//returns the position of the canvas so the center of the circle can be adjusted 
+		return {
+			x: xPos, 
+			y: yPos
+		};
+	}
+
+</script>
+</body>
+</html>
